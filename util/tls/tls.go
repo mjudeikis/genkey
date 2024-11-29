@@ -43,6 +43,13 @@ func generateKeyAndCertificate(commonName string, parentKey *rsa.PrivateKey, par
 
 	ip := net.ParseIP(commonName)
 
+	fmt.Print("Generating certificate for ")
+	if ip.To4() != nil {
+		fmt.Printf("IP: %s\n", ip.String())
+	} else {
+		fmt.Printf("DNS: %s\n", commonName)
+	}
+
 	template := &x509.Certificate{
 		SerialNumber:          serialNumber,
 		NotBefore:             now,
