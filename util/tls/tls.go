@@ -7,6 +7,7 @@ import (
 	"crypto/x509/pkix"
 	"fmt"
 	"math/big"
+	"net"
 	"time"
 )
 
@@ -40,6 +41,8 @@ func generateKeyAndCertificate(commonName string, parentKey *rsa.PrivateKey, par
 		notAfter = parentCert.NotAfter
 	}
 
+	ip := net.ParseIP(commonName)
+
 	template := &x509.Certificate{
 		SerialNumber:          serialNumber,
 		NotBefore:             now,
@@ -49,6 +52,7 @@ func generateKeyAndCertificate(commonName string, parentKey *rsa.PrivateKey, par
 		KeyUsage:              x509.KeyUsageDigitalSignature | x509.KeyUsageKeyEncipherment,
 		IsCA:                  isCA,
 		DNSNames:              []string{commonName},
+		IPAddresses:           []net.IP{ip},
 	}
 
 	if tweakTemplate != nil {
