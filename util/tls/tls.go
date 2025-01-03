@@ -44,7 +44,9 @@ func generateKeyAndCertificate(commonName string, parentKey *rsa.PrivateKey, par
 	ip := net.ParseIP(commonName)
 
 	fmt.Print("Generating certificate for ")
+	var isIP bool
 	if ip.To4() != nil {
+		isIP = true
 		fmt.Printf("IP: %s\n", ip.String())
 	} else {
 		fmt.Printf("DNS: %s\n", commonName)
@@ -59,7 +61,9 @@ func generateKeyAndCertificate(commonName string, parentKey *rsa.PrivateKey, par
 		KeyUsage:              x509.KeyUsageDigitalSignature | x509.KeyUsageKeyEncipherment,
 		IsCA:                  isCA,
 		DNSNames:              []string{commonName},
-		IPAddresses:           []net.IP{ip},
+	}
+	if isIP {
+		template.IPAddresses = []net.IP{ip}
 	}
 
 	if tweakTemplate != nil {
